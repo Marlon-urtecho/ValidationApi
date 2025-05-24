@@ -60,3 +60,9 @@ class AmortizacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Amortizacion
         fields = '__all__'
+
+class AmortizacionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Amortizacion
+        fields = '__all__'
+        read_only_fields = fields
