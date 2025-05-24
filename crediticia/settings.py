@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'crediticia.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'mssql',  # Cambia a 'mssql'
+        'ENGINE': 'mssql',
         'NAME': 'validacionDB',
         'USER': 'ursMarlon',
         'PASSWORD': '1234',
