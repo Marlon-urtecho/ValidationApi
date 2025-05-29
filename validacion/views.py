@@ -1,3 +1,4 @@
+from django.db import connection
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.views import APIView
@@ -26,7 +27,6 @@ class TablaAmortizacionCalculada(APIView):
         except Persona.DoesNotExist:
             return Response({"detail": "Persona no encontrada"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Obtener solicitud activa o la que quieras calcular (ajusta según tu lógica)
         solicitud = Solicitud.objects.filter(IdPersona=persona).first()
         if not solicitud:
             return Response({"detail": "No se encontró solicitud para esta persona"}, status=status.HTTP_404_NOT_FOUND)
@@ -34,8 +34,8 @@ class TablaAmortizacionCalculada(APIView):
         P = float(solicitud.MontoSolicitado)
         n = solicitud.PlazoFinanciero  # meses
 
-        # Obtenemos tasa anual desde query params o asumimos 12%
-        tasa_anual = float(request.query_params.get("tasa_anual", 12))
+        # Leer tasa desde la base de datos (modelo), convertir a float
+        tasa_anual = float(solicitud.TasaInteresAnual)
         r = tasa_anual / 100 / 12  # tasa mensual decimal
 
         # Calcular cuota fija mensual
@@ -72,6 +72,7 @@ class TablaAmortizacionCalculada(APIView):
             "TablaAmortizacion": tabla,
         })
 
+
 class PersonaViewSet(viewsets.ModelViewSet):
     queryset = Persona.objects.all()
     serializer_class = PersonaSerializer
@@ -99,3 +100,41 @@ class GastosMensualesViewSet(viewsets.ModelViewSet):
 class ReferenciaPersonalViewSet(viewsets.ModelViewSet):
     queryset = ReferenciaPersonal.objects.all()
     serializer_class = ReferenciaPersonalSerializer
+
+
+
+class EvaluarCapacidadPagoAPIView(APIView):
+    def get(self, request, persona_id):
+        query = """
+            EXEC EvaluarCapacidadPagoReal @IdPersona = %s;
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(query, [persona_id])
+            row = cursor.fetchone()
+
+        if row:
+            (
+                persona_id,
+                ingreso_total,
+                gastos_totales,
+                flujo_caja_libre,
+                cuota_mensual,
+                dscr,
+                estado_credito
+            ) = row
+
+            return Response({
+                "PersonaId": persona_id,
+                "IngresosMensualesTotales": float(ingreso_total),
+                "GastosMensualesTotales": float(gastos_totales),
+                "FlujoCajaLibre": float(flujo_caja_libre),
+                "CuotaMensual": float(cuota_mensual),
+                "DSCR": float(dscr) if dscr is not None else None,
+                "EstadoCredito": estado_credito
+            })
+        else:
+            return Response(
+                {"detail": "No se encontraron datos para la persona especificada."},
+                status=status.HTTP_404_NOT_FOUND
+            )
