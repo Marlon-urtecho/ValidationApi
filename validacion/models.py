@@ -24,6 +24,7 @@ class Solicitud(models.Model):
     MontoSolicitado = models.DecimalField(max_digits=10, decimal_places=2)
     PlazoFinanciero = models.IntegerField()
     PropositoPrestamo = models.CharField(max_length=255)
+    TasaInteresAnual = models.DecimalField(max_digits=5, decimal_places=2)
     Estado = models.CharField(max_length=50)
     IdPersona = models.ForeignKey(Persona, on_delete=models.CASCADE, related_name="solicitudes")
 
