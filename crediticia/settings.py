@@ -28,9 +28,13 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+CORS_ALLOW_ALL_ORIGINS = True
+
+
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
     'validacion',
 ]
 
@@ -62,6 +67,7 @@ SIMPLE_JWT = {
 
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -95,20 +101,30 @@ WSGI_APPLICATION = 'crediticia.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+#DATABASES = {
+ #    'default': {
+ #        'ENGINE': 'mssql',
+ #       'NAME': 'validacionDB',
+#       'USER': 'MarlonUser',  # usuario de la base de datos
+ #        'PASSWORD': '1234',
+  #       'HOST': 'DESKTOP-6VP4C5M',
+  #       'PORT': '',
+  #       'OPTIONS': {
+  #           'driver': 'ODBC Driver 17 for SQL Server',
+  #       },
+  #   }
+#}
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'mssql',
-        'NAME': 'validacionDB',
-        'USER': 'ursMarlon',
-        'PASSWORD': '1234',
-        'HOST': 'DESKTOP-6VP4C5M',
-        'PORT': '',
-        'OPTIONS': {
-            'driver': 'ODBC Driver 17 for SQL Server',
-        },
+   'default': {
+       'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'CrediticiaDB', 
+        'USER': 'postgresUser',  
+       'PASSWORD': 'MAUD2023.',
+       'HOST': 'localhost',  
+       'PORT': '5432',      
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
