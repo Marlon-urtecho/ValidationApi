@@ -1,10 +1,8 @@
 from django.contrib import admin
-from .models import (
-    Persona, Solicitud, Laboral, Domicilio, Conyuge,
-    GastosMensuales, ReferenciaPersonal, Amortizacion
-)
 from django.utils.translation import gettext_lazy as _
 
+from .models import (Amortizacion, Conyuge, Domicilio, GastosMensuales,
+                     Laboral, Persona, ReferenciaPersonal, Solicitud)
 
 @admin.register(Persona)
 class PersonaAdmin(admin.ModelAdmin):

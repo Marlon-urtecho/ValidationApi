@@ -31,7 +31,6 @@ class Solicitud(models.Model):
     def __str__(self):
         return self.NumeroSolicitud
 
-
 class Laboral(models.Model):
     IdLaboral = models.AutoField(primary_key=True)
     IdPersona = models.ForeignKey(Persona, on_delete=models.CASCADE, related_name="laborales")
